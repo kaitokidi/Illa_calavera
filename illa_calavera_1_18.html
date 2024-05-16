@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Gallery</title>
+
+    <style>
+
+	
+#scoreDisplay {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* A more readable and modern font */
+  font-size: 18px; /* Slightly larger font size for better visibility */
+  line-height: 1.5; /* Adequate line spacing for readability */
+  color: #4A4A4A; /* A softer color than pure black for text */
+  background-color: #F0F0F0; /* A subtle background color */
+  border-left: 5px solid #007bff; /* A blue accent border on the left for visual interest */
+  padding: 12px 20px; /* Ample padding for a spacious layout */
+  margin-bottom: 20px; /* Space below the div to separate it from subsequent content */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* A subtle shadow for depth */
+  min-height: 72px; /* Ensure it occupies the space of two lines, adjust based on your font size and line height */
+  display: flex; /* Use flexbox for vertical centering */
+  align-items: center; /* Align text vertically in the middle */
+  justify-content: center; /* Center text horizontally */
+  text-align: center; /* Ensure text is centered if it wraps to a new line */
+  border-radius: 8px; /* Rounded corners for a modern look */
+}
+
+  .current {
+    text-align: center;
+  }
+  .total {
+    text-align: center;
+  }
+
+        body {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin: 20px;
+  background-color:  #FFFFE0;
+}
+
+.image-gallery {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.small-images {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 images per row */
+  grid-gap: 2px; /* Reduced gap between images */
+  width: 80%; /* Adjust the width as needed to control image size */
+  margin-bottom: 20px; /* Space between the small images and the big image */
+}
+
+.image-container {
+  cursor: pointer;
+  overflow: hidden;
+  aspect-ratio: 1 / 1; /* Keeps the containers square */
+  padding-top: 15%; /* Reduced padding to decrease space and adjust image size */
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.big-image {
+  width: 40%; 
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.big-image img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+button#botoTornNou {
+  padding: 10px 20px;
+  width: 40%; /* Adjust button width */
+  height: fit-content; /* Adjust height to content */
+}
+.big-image-container {
+  display: flex;
+  align-items: center; /* Align vertically */
+  justify-content: space-evenly;
+  margin-top: 10px;
+}
+
+
+
+@keyframes bounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+.image-container.selected {
+  border: 3px solid #FFD700; 
+  animation: bounce 0.5s ease;
+  box-shadow: 0 0 0 20px #FFD700 inset; /* Simulates a border that fits tightly */
+}
+
+ .container {
+    display: grid;
+    gap: 8px;
+    padding: 8px;
+  }
+  .column {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+  }
+  /* Initial grid setup */
+  .container {
+    grid-template-columns: repeat(5, 1fr); /* Default to 5 columns */
+  }
+  .highlight {
+  background-color: #ffff99; /* Light yellow background */
+}
+
+/* Add your CSS here */
+.popup {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Popup content */
+.popup-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaaaaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: 'Arial', sans-serif;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.4); /* Distinct focus style */
+}
+
+button:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+}
+
+.input-button-container {
+  display: flex;
+  margin: 0;
+  vertical-align: middle;
+  font-size: 16px;
+  line-height: 20px;
+  padding: 6px 12px;
+  height: 60px; /* Adjust based on your design */
+  box-sizing: border-box;
+  justify-content: space-evenly;
+}
+
+#columnInput {
+	width: 10%;
+}
+
+
+
+/*taula de punts*/
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 8px;
+	text-align: center;
+}
+.split-cell {
+	margin-left: 10px;
+}
+
+.image-container img {
+  border-radius: 15px;
+}
+
+    </style>
+</head>
+<body>
+
+
+<div id="scoreDisplay"> Preparats per viure una gran aventura? </div>
+
+<div class="image-gallery">
+    <div class="small-images">
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+        <div class="image-container" onclick="toggleImageSelection(this);">
+            <img alt="Small Image">
+        </div>
+    </div>
+	<button onclick="rollSelectedImages()" id="rollDiceButton">Tira Daus Marcats</button>
+	<div id="debug">  </div>
+    <!-- Grouping big image and button -->
+<div class="big-image-container">
+    <div class="big-image">
+        <img src="https://lh3.googleusercontent.com/pw/AP1GczOXo2kMYpkMBmyx__zNwVBNfu4qUKZ7FTw7LBuPH2h7KnWSd5lja_GJAdHuNffyf7RlLnGUlQlBKePQeUkkytoFY5bsZ-5Y_C-Xkvb5OEIMeUql1UBj9RCp9_4YrjJSc6ov4_RS2l69N3kc0uz5o59T-Q=w856-h1280-s-no?authuser=0" alt="Big Image">
+    </div>
+    <button onclick="comencaTorn()" id="botoTornNou">Començar Torn Nou</button>
+</div>
+
+</div>
+
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <strong id="nomGuanyador">Molt bé!</strong>
+		<img src="https://lh3.googleusercontent.com/pw/AP1GczN6NzpPPt7G4CY93ny4ZBWF90ytFW3UxV1atKCANXYd3PXId7yWqWeuQxYD1O5alSPRkysggvLi8Y1w8doYYYP2wXcvsAk1mplJ_xJrK26PVtFg-v-8DMVVpUkfFRDxxHCzXyVT9sJqpRVkwUVGn_ETfA=w1280-h911-s-no?authuser=0" alt="victoria" style="width:100%" >
+    </div>
+</div>
+
+<table id="dynamicTable">
+    <tr>
+        <th class="playername">Round</th>
+    </tr>
+    <tr>
+        <td>1</td>
+    </tr>
+</table>
+
+<div class="input-button-container">
+  <input type="number" id="columnInput"  placeholder="num Jugadors">
+  <button onclick="createColumns()">Prepara Taula de Puntuació</button>
+</div>
+
+<script> // Update your image arrays to include weights
+
+// Update your image arrays to include weights
+var defaultImage = "https://lh3.googleusercontent.com/pw/AP1GczNtoVO5NgVRl6pW7V7PaMN5V3kCutaryIR1Bz3bJz33gWeNLHK1dbNXRD_b4Ds27-jgGW4ilCRoMqzd8WXi77XnpKkA9dPXeXYMUVOk1PlYbWwQcJhBYKo5yLX4lHRm52wBQUc-FvM2tJsnqGGkJto7EQ=w1280-h1280-s-no?authuser=0";
+
+
+var diceDiamond = 'https://lh3.googleusercontent.com/pw/AP1GczM2uaBEH2GA4lX5ocGBZlGNaWrulB97WeIIfNrb6FIp14H6P1aW7TDNEXceYIr4kBDiEEB-Ft87CvD8cYshRktkOS1Qjbo-Fl6xduFCElTcr1Nr6iDmg6TDryRsx6bRdN8knKvSQiJEXyHAG5XIRVy6VQ=w1280-h1280-s-no?authuser=0';
+var diceCoin = 'https://lh3.googleusercontent.com/pw/AP1GczMFSL37fOx3hwuhS8lcjNLYEkM5ruLBaDF9Vn2ZcXfQMh9DG4UW_lIV0gkkmW8B19rnIpTrAHkxJx34voZn6-ZBnC-eUl4l9avfzP17ra9D4Q2f6JDJ73FtrYWwO_6hb8pZW3nxNPF1s0c1D3X68Q14Xw=w1280-h1280-s-no?authuser=0';
+var diceMonkey = 'https://lh3.googleusercontent.com/pw/AP1GczMmqibUJUFgZenFKjLj1Vy1zDi7lrKX-r0ZoWQOwavpJuId3pxH7uYnns7C4yeZj0TEPT5Wi0VABkLKaG5z7F9TTICIanSfcaxF6ToBUjxlfqjn6X6CQurdGkXx3XV5efEJ3Pjm3e-GRGqVkspNxZfm-g=w1280-h1280-s-no?authuser=0';
+var diceParrot = 'https://lh3.googleusercontent.com/pw/AP1GczMBPyWGI3p4dSEQygAnkxyIsgb6QjIU0nPMXh7oBko2wPurRnnf3yYTunxMRStXXAPFbb5xQ-MsloBjtwtoGjnEDTpb8vhBI3Pj34_UpLkBuPx0DmSKorHhtKUgSk5jdEzLeVSc-GGqXSgpHgu3rT40tQ=w1280-h1280-s-no';
+var diceSkull = 'https://lh3.googleusercontent.com/pw/AP1GczMG8_9XHd4zNHeptspHY9Gegc85TP5DXUiwmGhwmNoJhyvuD8pOEf67VjANoWTRLA41fDnecrgQ4TPGo1JlqQcJFKMPmKqqojPNiYU81MCu0B-0QX5zEla6B1gFoMOlS7UNTj1p46ztvdxfmKSu3ZWMIg=w1280-h1280-s-no?authuser=0';
+var diceSword = 'https://lh3.googleusercontent.com/pw/AP1GczOTYnYCpTIQ-rVDBpNaoJpp34o_olmRtjZS5PktrDDwHuJcQ0uvuy7QW186RrqZd3SAN5k6ZqVEzpYCc0wIfbdpbWuuN9beQJKi6NDW21drYPLraLOZZr9P5sRsdjZtPfum5YpzvCogzlrsgeW9cb0ABQ=w1280-h1280-s-no?authuser=0';
+
+var pirata = 'https://lh3.googleusercontent.com/pw/AP1GczNfRbipF5M2VKvYViXRvCBhxyfYAStGmwManx9U7LkptEITbj3wRiUzKOLtJxAuWIrDtRLceUojJ5QNO87i6ie18R-k1iZKuOTfeqYvwXACKQE1kI00ZisI_-1EOTxVRml6LfL5ZckIAZrwUbo8VzvPJg=w856-h1280-s-no?authuser=0';
+var unaCalavera = 'https://lh3.googleusercontent.com/pw/AP1GczMaaFal6v57XkKOAgKfp_psXs86nM4B0X0-H8iLxDH10Rg0VEfY4F_qtr2I1Hi3_WM1Rzg4OoD6O_CCc2xIJ2YBziuZaB6dFf8QLI2pCOtHtIxhRph_sQLo5OsNLtBl1Qh0BB7ClapwqflSmJJI-BFj5A=w856-h1280-s-no?authuser=0';
+var monkeyparrot = 'https://lh3.googleusercontent.com/pw/AP1GczPKDTQIfTQafAQWnMK9V9RyHkPd9cCKkWDe1gfvrHjMawTwWwozveNGDBtpU4uQ_Tg07-aFQXgVccOtx2yCh-mWcxN355WS1UcwRR1SsRTq19v2GudBwZ5crn2h3LNdqAiGzI6M7F0TAExs08ICtM_QXQ=w856-h1280-s-no?authuser=0';
+var piratessa = 'https://lh3.googleusercontent.com/pw/AP1GczPONdut5THSBsT0FfG1rcc0fv_oZOlQWGBvu9OhxomEfcvtioytbw5MlEHRXX_n0aa0BaA9CZ7VZb4ZoFJNsdVTQIbNTtdLSVZoVyiFr8XhXo9E7nIV4tL5qFxd7HvsUq2a1jMy8yRqYnd68lH_BJ9Ebg=w856-h1280-s-no?authuser=0';
+var dosCalaveres = 'https://lh3.googleusercontent.com/pw/AP1GczOcTUswnhIUy34UhxFj-J5RIxzXgjylofIhIV6YqeNLVq03dvwzJwESulkHWFAshukA0RsBvZSyLvsRhB7JpOXfCzm2Bly87VNh8D1pxP0ecgNWxCuMBMDLvTBkp0Awrx5SR9-TgAXCNENQydEA7ZWoBQ=w856-h1280-s-no?authuser=0';
+var   diamant = 'https://lh3.googleusercontent.com/pw/AP1GczPEN9_WK74aXQSu3xHsCt9Suj-z0120CTspsHOrzeWtt_vfNtj3JFMe0zyK_l540xIAreLc-CAjWMGhf7LFzPdCgR5jlH8gXhvPzHEKkvqv89bWmswiCvc9BcAmZ-_OJY8fJdm6Le0E7tnMH9oqG9oZdw=w856-h1280-s-no?authuser=0';
+var   cofre = 'https://lh3.googleusercontent.com/pw/AP1GczPQCvBAwtmmRD9o4kz03Lmy6RLxh7sfLoF1fGeh1eh15OyXXd0q5B2FRMvJ5iNQuYd8Va2_qEJbDbKtxlFcP17PVlVH8wIsWDNBif7RzFO7m54ZJeLRqcR6oBOhV2bVviirko2otNfxF1_m85OukqclNg=w856-h1280-s-no?authuser=0';
+var   moneda = 'https://lh3.googleusercontent.com/pw/AP1GczP1bnUMlKHzpBYOi_oTJnlQ05Z3fRGDKvGGGm2aCJic7NRIS-XoaeC_eSBunXw7QsDbGvc_XtNJ7KH_SEzGsMOZwidWx32I35NZrmd4_jpbF8IqPg-_3k3aAmdx4LZiEKBnWHsfBeQliY2OVw34qxlrVQ=w856-h1280-s-no?authuser=0';
+var   pirates2 = 'https://lh3.googleusercontent.com/pw/AP1GczPLUneDTKe4c5Df6jJdMBp_G-Ukaq0PGQU-aYe2H1NSqolFIqX4w9YakoO8a5LL5jIhEwFKEbB0t5PwQQ1R4sMzuJI84wFKEYx44gdt0BRG_ACjPdKUzTuQQU-wSMBAh624FskKK5z5rZGqx0y4TwnS7A=w856-h1280-s-no?authuser=0';
+var   pirates3 = 'https://lh3.googleusercontent.com/pw/AP1GczMekKpNuqmPu9VNLBimIBHm8UvrBJBfjAA2uqFnSVWhA4d4EY0Lpg1wDodmP0f4yKGVJvyywRp6pdZeT9yidWNAFaA_fXez9djD7QUHpo9xeQPLbYt6kgodbTLu_5TMlxJbdpXI9542Lp-TrM_gJ9lnOw=w856-h1280-s-no?authuser=0';
+var   pirates4 = 'https://lh3.googleusercontent.com/pw/AP1GczPFO0SDMquz9vjEiXAfmBBAa3XYNzN9cr5dUJGvMT2PMtyGxRLX1wFLIUJERAnTKr4vRGii4UO7kErCy3beVbDum470U-MeJ66gwO1v4njnt6jAYyob_Xk6vKivmavHklwrNgwi1VCgDDsFUFRk_-8kBw=w856-h1280-s-no?authuser=0';
+
+const smallImages = [
+  {url: diceDiamond, weight: 1},{url: diceCoin, weight: 1},{url: diceMonkey, weight: 1},{url: diceParrot, weight: 1},{url:diceSkull, weight: 1},{url:diceSword, weight: 1} ];
+  
+var DiamondDiceIdx = 0;
+var CoinDiceIdx = 1;
+var MonkeyDiceIdx = 2;
+var ParrotDiceIdx = 3;
+var SkullDiceIdx = 4;
+var SwordDiceIdx = 5;
+
+var idxToDiceFaceName = ["Diamants","Monedes","Micos","LLoros","Calaveres","Espases"];
+
+var NomsJugador = ["Pingüí","Àguila","Ànec","LLoro","Blauet","Oreneta","Cigonya","Falcó","Flamenc","Cucut","Estornell","Guatlla","Merla","Oca","Periquito","Pinsà","Pardal","Pit-roig","Verdum","Xoriguer","Rossinyol","Milà","Colom","Gaig","Gavina","Mallerenga","Virka","Airbus A350"
+];
+
+const bigImages = [
+  {url: pirata, weight: 4},  {url: unaCalavera, weight: 3},  {url: monkeyparrot, weight: 4},  {url: piratessa, weight: 4},  {url: dosCalaveres, weight: 2},  {url: diamant, weight: 4},  {url: cofre, weight: 4},  {url: moneda, weight: 4},  {url: pirates2, weight: 2},  {url: pirates3, weight: 2},  {url: pirates4, weight: 2}
+  // Add more as needed
+];
+
+var areWeInIllaCalavera = false;
+var piratessaIsWaiting = false;
+var valorAlCofre = 0;
+var rollingImages = false;
+var currentPlayer = 0;
+var amountOfPlayers = 2;
+var isVeryFirstRoll = true;
+var nonSkullsLastRoll = 8;
+var illaCalaveraFinished = false;
+
+// Function to set image source for all images within .image-container elements
+function setImageSources() {
+    var images = document.querySelectorAll('.image-container img');
+    images.forEach(function(img) {
+        img.src = defaultImage;
+    });
+	createColumns();
+	document.getElementById('rollDiceButton').disabled = true;
+}
+
+// Set image sources when the document is loaded
+document.addEventListener('DOMContentLoaded', setImageSources);
+
+
+function comencaTorn() {
+    
+	
+	document.getElementById('botoTornNou').innerText = "Guarda Punts I Torn Nou";
+
+	if (rollingImages){
+		document.getElementById('debug').innerText = "Espera, Impacient!";
+		return;
+	}
+	
+	if(isVeryFirstRoll) {
+		isVeryFirstRoll = false;
+	}
+	else {
+		sumaPuntuacio(currentPlayer, ReloadPoints(false), areWeInIllaCalavera,"");
+		let pointsOfPlayer = getPlayerScore(currentPlayer);
+		if(pointsOfPlayer >= 60) {
+			OpenWinPopup(currentPlayer);
+			return;
+		}
+		currentPlayer = (currentPlayer+1)%amountOfPlayers;
+		if(currentPlayer == 0) addRow();
+		highlightColumn(currentPlayer);
+	}
+	
+	nonSkullsLastRoll = 8;
+	illaCalaveraFinished = false;
+	document.getElementById('scoreDisplay').innerText = "...";
+	
+//	document.getElementById('debug').innerText = "Tira el jugador"+(currentPlayer+1);
+	
+	document.querySelectorAll('.small-images .image-container.selected').forEach(container => {
+    	container.classList.toggle('selected');
+    });
+	
+	
+	valorAlCofre = 0;
+	areWeInIllaCalavera = false;
+	// Also roll the big image and include its URL in the scoring calculation
+    const bigImageElement = document.querySelector('.big-image ');
+	GenerateNewRandomDice(bigImageElement, bigImages, true, true);
+
+    document.querySelectorAll('.small-images .image-container').forEach(img => {
+		GenerateNewRandomDice(img, smallImages, true, true);
+    });
+	
+	document.getElementById('rollDiceButton').disabled = false;
+	rollingImages = true;
+	
+}
+
+function resetImages() {
+	areWeInIllaCalavera = false;
+  document.querySelectorAll('.small-images .image-container img').forEach((img, index) => {
+    img.src = defaultImage; // Reset to initial small image
+  });
+  document.querySelector('.big-image img').src = "https://lh3.googleusercontent.com/pw/AP1GczOXo2kMYpkMBmyx__zNwVBNfu4qUKZ7FTw7LBuPH2h7KnWSd5lja_GJAdHuNffyf7RlLnGUlQlBKePQeUkkytoFY5bsZ-5Y_C-Xkvb5OEIMeUql1UBj9RCp9_4YrjJSc6ov4_RS2l69N3kc0uz5o59T-Q=w856-h1280-s-no?authuser=0"; // Reset to initial big image
+  piratessaIsWaiting = false;
+  ReloadPoints(false);
+}
+
+function weightedRandomSelect(imageSet) {
+  let totalWeight = imageSet.reduce((sum, item) => sum + item.weight, 0);
+  let random = Math.random() * totalWeight;
+  for (let item of imageSet) {
+    if (random < item.weight) {
+      return item.url;
+    }
+    random -= item.weight;
+  }
+  return imageSet[imageSet.length - 1].url; // Fallback to the last image if needed
+}
+
+function toggleImageSelection(container) {
+	
+	if(areWeInIllaCalavera) {
+		document.getElementById('debug').innerText = "A la illa calavera no es tria!";
+		return;
+	}
+	
+	if (rollingImages){
+		document.getElementById('debug').innerText = "Espera, Impacient!";
+		return;
+	}
+	
+	let bigImageUrl = document.querySelector('.big-image img').src;
+
+	let skulls = 0;
+    document.querySelectorAll('.small-images .image-container img').forEach(img => {
+        if(img.src == diceSkull) skulls += 1;
+    });
+	if(bigImageUrl == unaCalavera) skulls += 1;
+	if(bigImageUrl == dosCalaveres) skulls += 2;
+	//document.getElementById('debug').innerText = skulls +" skulls";
+	if(!areWeInIllaCalavera && skulls >= 3) return;
+	
+	let imgSrc = container.querySelector('img').src;
+	
+	if(imgSrc != diceSkull && imgSrc != defaultImage || piratessaIsWaiting){
+		container.classList.toggle('selected');
+	}
+  
+	if(bigImageUrl == cofre){
+		const unselectedImageUrls = []; // This will hold the URLs after rolling
+
+		document.querySelectorAll('.small-images .image-container:not(.selected) img').forEach(img => {
+			unselectedImageUrls.push(img.src); // Store the new image URL
+		});
+	
+		valorAlCofre = calculateScore(unselectedImageUrls, bigImageUrl, false, true);
+	}
+     
+}
+
+function rollSelectedImages() {
+	
+	if(areWeInIllaCalavera) {
+		nonSkullsLastRoll = selectAllNonSkulls();
+	}
+	
+	if (rollingImages){
+		document.getElementById('debug').innerText = "Espera, Impacient!";
+		return;
+	}
+	
+	let selected = document.querySelectorAll('.small-images .image-container.selected');
+	if(selected.length >= 2 || areWeInIllaCalavera) {		
+		document.getElementById('scoreDisplay').innerText = "...";
+	
+		document.querySelectorAll('.small-images .image-container.selected').forEach(container => {
+			changeImage(container, smallImages, false); // Adjust parameters as needed
+			container.classList.toggle('selected');
+		});
+		
+		rollingImages = true;
+	}else {
+		document.getElementById('debug').innerText = "Has de triar un mínim de dos daus.";
+	}
+}
+
+function changeImage(element, imageSet, isFirstRoll) {
+	 GenerateNewRandomDice(element, imageSet, isFirstRoll, false);
+}
+
+function GenerateNewRandomDice(element, imageSet, isFirstRoll, ignoreLock) {
+	
+  if(!isFirstRoll && element.querySelector('img').src == diceSkull){
+	  if(piratessaIsWaiting) { 
+		piratessaIsWaiting = false;
+	  } else return;
+  }
+	
+  let counter = 0;
+  const maxChanges = 6; // Maximum number of image changes
+  const interval = setInterval(() => {
+    if(counter >= maxChanges) {
+		
+	  let url = weightedRandomSelect(imageSet);
+      element.querySelector('img').src = url;
+	  
+	  if(imageSet == bigImages){
+		piratessaIsWaiting = url == piratessa;
+	  }
+	  
+	  
+      clearInterval(interval);
+	  
+    } else {
+      element.querySelector('img').src = weightedRandomSelect(imageSet);
+      counter++;
+    }
+  }, 200); // Change every 200ms 
+  
+  const interval2 = setInterval(() => {
+  
+		ReloadPoints(isFirstRoll);
+		rollingImages = false
+		
+		document.getElementById('debug').innerText = "";
+      clearInterval(interval2);
+	  if(areWeInIllaCalavera) {
+		currentNonSkulls = selectAllNonSkulls(); 
+		if(nonSkullsLastRoll == currentNonSkulls){
+			illaCalaveraFinished = true;
+			document.getElementById('debug').innerText = "A l'illa Calavera només es pot tirar fins que es tira una ronda sense calaveres noves, comença torn nou!";
+			document.getElementById('rollDiceButton').disabled = true;
+			document.querySelectorAll('.small-images .image-container.selected').forEach(container => {
+				container.classList.toggle('selected');
+			});
+		}
+	  }
+	  
+  }, 200*8); // timeToRoll
+
+}
+
+function ReloadPoints(isFirstRoll){
+	const rolledImageUrls = []; // This will hold the URLs after rolling
+
+    document.querySelectorAll('.small-images .image-container img').forEach(img => {
+        rolledImageUrls.push(img.src); // Store the new image URL
+    });
+	
+	let bigImageUrl = document.querySelector('.big-image img').src;
+	
+	return calculateScore(rolledImageUrls, bigImageUrl, isFirstRoll, false);
+}
+
+function CalculateCounts(imageUrls){
+
+	let counts = {};
+// Initialize counts for each image ID based on its position in the smallImages array
+    smallImages.forEach((img, index) => {
+        counts[index] = 0; // Initialize count for each image ID
+    });
+
+    // Count occurrences of each image URL by finding its index in the smallImages array
+    imageUrls.forEach(url => {
+        const id = smallImages.findIndex(img => img.url === url);
+        if (id !== -1) { // Ensure the URL was found in the array
+            counts[id] += 1;
+        }
+    });
+	return counts;
+}
+
+function calculateScore(imageUrls, cardUrl, isFirstRoll, calculatedThroughSelection) {
+	
+    let score = 0;
+    let counts = {};
+    let allContributed = true;
+	let explanation = "";
+	
+    counts = CalculateCounts(imageUrls)
+	
+	let thereAreSkullDice = counts[SkullDiceIdx] > 0;
+	if(cardUrl == unaCalavera) {
+		explanation += "Contant la carta de Calavera, "
+		counts[SkullDiceIdx] += 1;
+	}
+	else if(cardUrl == dosCalaveres) {
+		explanation += "Contant les calaveres de la Carta, "
+		counts[SkullDiceIdx] += 2;
+	}
+	for(let i = 0; i < counts[SkullDiceIdx]; i++){
+		explanation += " ☠ ";
+	} 
+	
+	explanation += "( ";
+	
+	if(cardUrl == moneda) {
+		explanation += "1 moneda de Carta."
+		counts[CoinDiceIdx] += 1;
+	}
+	else if(cardUrl == diamant) {
+		explanation += "1 diamant de Carta. "
+		counts[DiamondDiceIdx] += 1;
+	}
+	else if(cardUrl == monkeyparrot) {
+		explanation += "Els micos són lloros, "
+		counts[ParrotDiceIdx] += counts[MonkeyDiceIdx];
+		counts[MonkeyDiceIdx] = 0;
+	}
+
+	
+    // Score 1 point for each occurrence of IDs 0 and 1
+	let diamondCount = counts[DiamondDiceIdx];
+	if(diamondCount > 0) {
+		score += diamondCount; // Assuming the first image's occurrences contribute to the score
+		explanation += diamondCount  + " de "+idxToDiceFaceName[DiamondDiceIdx]+". "
+	}
+	
+	let coinCount = counts[CoinDiceIdx];
+    if(coinCount > 0) {
+		score += coinCount; // Assuming the first image's occurrences contribute to the score
+		explanation += coinCount  + " de "+idxToDiceFaceName[CoinDiceIdx]+". "
+	}
+	
+
+    // Scoring based on groups of the same image
+    Object.entries(counts).forEach(([id, count]) => {
+    // Convert id back to a number if necessary (it will be a string when coming from an object key)
+    const numericId = parseInt(id, 10);
+
+    if (count === 3) {
+        score += 1;
+		explanation += 1 + " per trio de " + idxToDiceFaceName[id]+". "
+    } else if (count === 4) {
+        score += 2;
+		explanation += 2 + " per quartet de " + idxToDiceFaceName[id]+". "
+    } else if (count === 5) {
+        score += 5;
+		explanation += 5 + " per cinc " + idxToDiceFaceName[id]+". "
+    } else if (count === 6) {
+        score += 10;
+		explanation += 10 + " per sis " + idxToDiceFaceName[id]+". "
+    } else if (count === 7) {
+        score += 20;
+		explanation += 20 + " per set " + idxToDiceFaceName[id]+". "
+    } else if (count === 8) {
+        score += 40;
+		explanation += 40 + " vuit " + idxToDiceFaceName[id]+". "
+    } else if(count === 9){
+		if(id == CoinDiceIdx || id == DiamondDiceIdx){
+			score += 1200;
+			explanation = "Has Guanyat la partida per tenir 9 "+ idxToDiceFaceName[id]+"!!! Gaudeix del teu tresor!!!"
+		}
+	}
+
+	if (thereAreSkullDice || (numericId !== SkullDiceIdx && count > 0 && count < 3 && numericId !== DiamondDiceIdx && numericId !== CoinDiceIdx)) {
+		let isMonkeyParrotCase = (cardUrl == monkeyparrot) && (id == ParrotDiceIdx || id == MonkeyDiceIdx) && ((counts[MonkeyDiceIdx] + counts[ParrotDiceIdx]) >= 3);
+		if(!isMonkeyParrotCase){
+			allContributed = false; // Mark false if any group not special-cased has less than 3
+		}
+    }
+
+
+    });
+
+    // Bonus points if all images contributed to some scoring
+    if (allContributed) {
+        score += 5;
+		explanation += 5 + " perquè tot puntua. "
+    }
+
+	if (cardUrl == pirata){
+		explanation += " +"+score+" per el Pirata!";
+		score = score*2;
+	}
+	
+	if (cardUrl == pirates2){
+		if(counts[SwordDiceIdx] >= 2){
+			explanation += " +"+3+" per derrotar els pirates!";
+			score += 3;
+		}
+		else {
+			explanation += " Però els pirates t'ho han robat tot!";
+			score = -3;
+		}
+	}
+	if (cardUrl == pirates3){
+		if(counts[SwordDiceIdx] >= 3){
+			explanation += " +"+5+" per derrotar els pirates!";
+			score += 5;
+		}
+		else {
+			explanation += " Però els pirates t'ho han robat tot!";
+			score = -5;
+		}
+	}
+	if (cardUrl == pirates4){
+		if(counts[SwordDiceIdx] >= 4){
+			explanation += " +"+10+" per derrotar els pirates!";
+			score += 10;
+		}
+		else {
+			explanation += " Però els pirates t'ho han robat tot!";
+			score = -10;
+		}
+	}
+
+	
+    // Update the score display
+	//if(!calculatedThroughSelection){
+		document.getElementById('scoreDisplay').innerText = "Punts: " + score +" ->" + explanation+" )";
+	//}
+	
+	
+	
+	if((isFirstRoll && counts[SkullDiceIdx] >= 4) || (!isFirstRoll && areWeInIllaCalavera)) {
+		
+		if(areWeInIllaCalavera)	explanation = "Estem a la ";
+		else explanation = "Anem a la ";
+		
+		areWeInIllaCalavera = true;
+		explanation += " ☠ILLA CALAVERA☠! -"+counts[SkullDiceIdx]+" per tots els altres! )";
+		document.getElementById('scoreDisplay').innerText = explanation;
+		score = -counts[SkullDiceIdx];
+		selectAllNonSkulls();
+			
+	}
+	else if(counts[SkullDiceIdx] >= 3){
+		score = 0;
+		explanation = "☠☠☠ Mort per calavera ☠☠☠";
+		document.getElementById('rollDiceButton').disabled = true;
+		if(isFirstRoll) explanation += " i a la primera...";
+		
+		if(cardUrl == cofre) {
+			explanation += " Tot i que al cofre hi havia " + valorAlCofre + " punts.";
+			score = valorAlCofre;
+		}
+		if(cardUrl == pirates2) {
+			explanation += " I a sobre els pirates et roben " + 3 + " punts.";
+			score = -3;
+		}
+		else if(cardUrl == pirates3) {
+			explanation += " I a sobre els pirates et roben " + 5 + " punts.";
+			score = -5;
+		}
+		else if (cardUrl == pirates4) {
+			explanation += " I a sobre els pirates et roben " + 10 + " punts.";
+			score = -10;
+		}
+
+		document.getElementById('scoreDisplay').innerText = explanation;
+	}
+	
+	if(calculatedThroughSelection){
+		valorAlCofre = score;
+	}
+	
+    return score;
+}
+
+
+function selectAllNonSkulls(){
+	skulls = 0;
+	document.querySelectorAll('.small-images .image-container img').forEach(img => {
+        if(img.src == diceSkull) skulls += 1;
+		else if(img.src != defaultImage){
+			img.parentNode.classList.add('selected');
+		}
+    });
+	return 8-skulls;
+}
+
+//================================
+//================================
+//==========POPUP=============
+//================================
+//================================
+
+
+var popup = document.getElementById("popup");
+
+// Get the <span> element that closes the popup
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks the button, open the popup 
+function OpenWinPopup(currentPlayer) {
+	let nomGuanyador = table.rows[0].cells[currentPlayer+1].textContent;
+	document.getElementById("nomGuanyador").innerText = nomGuanyador;
+	
+    popup.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the popup
+span.onclick = function() {
+    popup.style.display = "none";
+	resetImages();
+	createColumns();
+	amountOfPlayers = 2;
+	document.getElementById('scoreDisplay').innerText = "Partida Nova! (Posa els jugadors i comença nou Torn).";
+	areWeInIllaCalavera = false;
+	piratessaIsWaiting = false;
+	valorAlCofre = 0;
+	rollingImages = false;
+	currentPlayer = 0;
+	highlightColumn(currentPlayer)
+	isVeryFirstRoll = true;
+	nonSkullsLastRoll = 8;
+	illaCalaveraFinished = false;
+	
+	document.getElementById('botoTornNou').innerText = "Començar Torn Nou";
+}
+
+
+
+
+//===================================
+//===================================
+//=======Taula nova ================
+//===================================
+//===================================
+
+let table = document.getElementById('dynamicTable');
+let roundCounter = 2; // Starts from Round 3 since rounds 1 and 2 already exist
+
+
+function createColumns() {
+  const container = document.getElementById('columnsContainer');
+  let columnCount = document.getElementById('columnInput').value;
+  if(columnCount =='' || columnCount > NomsJugador.length || columnCount < 2) {
+	if(columnCount!='') document.getElementById('debug').innerText = "Millor jugueu Dos...";
+	if(columnCount!='' && columnCount > NomsJugador.length) document.getElementById('debug').innerText = "El màxim és "+NomsJugador.length+". Us posaré Dos...";
+	columnCount = 2;
+	document.getElementById('columnInput').value = 2;
+  }
+  
+  amountOfPlayers = columnCount;
+  
+  for (let i = 0; i < table.rows[0].cells.length; i++) {
+   removeColumn();
+  }
+  
+  // Clear existing columns
+  nomsJugadors = []
+  for (let i = 0; i < columnCount; i++) {
+	let uniqueNameFound = false;
+	let nomJugador;
+
+	while (!uniqueNameFound) {
+		let randomIndex = Math.floor(Math.random() * NomsJugador.length); 
+		nomJugador = NomsJugador[randomIndex]; 
+
+		if (!nomsJugadors.includes(nomJugador)) {
+			nomsJugadors.push(nomJugador); 
+			uniqueNameFound = true; 
+		}
+	}
+	
+	addColumn(nomJugador);
+    
+  }
+  
+  // Highlight the column after creating them, if currentPlayer is set
+  highlightColumn(currentPlayer);
+}
+
+function addColumn(nomJugador) {
+    let headerRow = table.rows[0];
+    let newHeader = document.createElement('th');
+    newHeader.textContent = nomJugador;
+	newHeader.classList.add("playername");
+    headerRow.appendChild(newHeader);
+
+    for (let i = 1; i < table.rows.length; i++) {
+        let newRowCell = document.createElement('td');
+        newRowCell.className = "split-cell";
+        newRowCell.textContent = '-'; // Initial value for new cells
+        table.rows[i].appendChild(newRowCell);
+    }
+}
+
+function removeColumn() {
+    let headers = table.rows[0].cells.length;
+    if (headers > 1) { // Keeps at least two names
+        for (let i = 0; i < table.rows.length; i++) {
+            table.rows[i].deleteCell(-1);
+        }
+    } else {
+       // alert("At least two names must be present.");
+    }
+}
+
+function addRow() {
+    let newRow = table.insertRow(1); 
+    let cell1 = newRow.insertCell(0);
+    cell1.textContent = roundCounter++; // Assign the next round number
+
+    // Create split cells for the rest of the new row
+    for (let i = 1; i < table.rows[0].cells.length; i++) {
+        let cell = newRow.insertCell(i);
+        cell.className = "split-cell";
+        cell.textContent = '-'; // Initial value for new cells
+    }
+}
+
+function modifyPlayerScore(playerColumn, newScore, prefix) {
+	let points = newScore;
+    if(newScore == "startSkull") points = "0";
+    if(newScore == "finishSkull") points = "0";
+    
+    if(playerColumn < 1 || playerColumn >= table.rows[0].cells.length) {
+        alert("Invalid player column.");
+        return;
+    }
+
+    // Assuming the first row of players' scores is always row index 2
+    let scoreCell = table.rows[1].cells[playerColumn];
+	if(table.rows.length == 2) scoreCell.textContent = points; // Set the new score
+	else {
+		const prev = getLastNumber(table.rows[2].cells[playerColumn].textContent);
+		let sign = "+";
+		if(points < 0) sign = "";
+		scoreCell.textContent =  prefix+sign+points+" = "+(Number(prev)+Number(points));
+		
+		if(newScore == "startSkull")  scoreCell.textContent = " >>☠ | "+(Number(prev)+Number(points));
+		if(newScore == "finishSkull")  scoreCell.textContent = " ☠<< | "+(Number(prev)+Number(points));
+	}
+
+	
+}
+
+function getPlayerScore(idx) {
+
+	scoreColumn = idx+1;
+    // Validation
+    if(scoreColumn < 1 || scoreColumn >= table.rows[1].cells.length) {
+        alert("Invalid score column."+scoreColumn);
+        return;
+    }
+    
+    // Retrieving the score from the first row of scores, which is the second row in the table (index 1)
+    let score = getLastNumber(table.rows[1].cells[scoreColumn].textContent); // Getting the text content of the cell
+    //alert("The score for the column " + scoreColumn + " is: " + score);
+	return score;
+}
+
+function sumaPuntuacio(currentPlayer, punts, forIllaCalavera, prefix) {
+	if(forIllaCalavera){
+		pointsForIllaCalavera(currentPlayer,punts);
+	}
+	else {
+		modifyPlayerScore(currentPlayer+1, punts, prefix);
+	}
+}
+
+function highlightColumn(currentPlayer) {
+
+  document.querySelectorAll('.playername').forEach(col => col.classList.remove('highlight'));
+  
+  // Then, add highlight to the specified column
+  const columnToHighlight = table.rows[0].cells[currentPlayer+1];
+  if(columnToHighlight) {
+    columnToHighlight.classList.add('highlight');
+  }
+}
+
+function pointsForIllaCalavera(currentPlayer,value) {
+  for (let i = 0; i < amountOfPlayers; i++) {
+	if(i > currentPlayer) sumaPuntuacio(i, value, false, "☠");
+	if(i == currentPlayer) sumaPuntuacio(i,"startSkull",false,"");
+  }
+  addRow();  
+  for (let i = 0; i < amountOfPlayers; i++) {
+	if(i < currentPlayer) sumaPuntuacio(i, value, false,"☠");
+	if(i == currentPlayer)  sumaPuntuacio(i,"finishSkull",false,"");
+  }
+
+}
+
+
+function getLastNumber(str) {
+	if(str == "-") return 0;
+  const numbers = String(str).match(/-?\d+/g);
+  if (!numbers) return null;
+  return Number(numbers[numbers.length - 1]);
+}
+</script>
+
+</body>
+</html>
